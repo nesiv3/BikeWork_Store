@@ -1,3 +1,4 @@
+import random
 from application.store.dto import StoreReadDTO, StoreReadWithDeliveryTimeDTO
 from domain.store import Store
 
@@ -8,7 +9,7 @@ class StoreReadDTOBuilder:
 
     def calculate_delivery_time(self):
         # Lógica para calcular el tiempo de entrega
-        self.delivery_time = 60  
+        self.delivery_time = random.randint(10, 120)    
         return self
 
     def build(self):
