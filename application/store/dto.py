@@ -8,12 +8,16 @@ class StoreCreateDTO(BaseModel):
     phone_number: str
     image: str | None = None  # si es opcional
 
+
     model_config = {
         "from_attributes": True
     }
 
 class StoreReadDTO(StoreCreateDTO):
     id: int
+  
 
+class StoreReadWithDeliveryTimeDTO(StoreReadDTO):
+    delivery_time: int  # Asegúrate de que este campo esté definido si lo necesitas
     class Config:
         orm_mode = True
