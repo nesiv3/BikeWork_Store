@@ -1,8 +1,14 @@
+import os  # Asegúrate de importar el módulo os
 from sqlalchemy import Column, BigInteger, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
 
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://avnadmin:AVNS_ltwZKMkt-uINKqDv49B@store-db-store-database-ds.g.aivencloud.com:15941/bikework_store"
+
+# Cargar variables de entorno desde el archivo .env
+load_dotenv()
+
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
