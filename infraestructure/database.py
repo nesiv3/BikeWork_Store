@@ -1,5 +1,6 @@
 import os  # Asegúrate de importar el módulo os
-from sqlalchemy import Column, BigInteger, String, create_engine
+from sqlalchemy import TIMESTAMP, Column, BigInteger, Date, ForeignKey, String, create_engine
+from sqlalchemy.types import Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
@@ -25,3 +26,26 @@ class StoreORM(Base):
     document_number = Column(String(50))
     phone_number = Column(String(50))
     image = Column(String(255))
+
+class StoreDisabledDatesORM(Base):
+    __tablename__ = "store_disabled_dates"
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    store_id = Column(BigInteger, ForeignKey("store.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False)
+    the_date = Column(Date, nullable=False)
+    reason = Column(String(100), nullable=False)
+    created_at = Column(TIMESTAMP, nullable=True)
+
+class StoreSpecialDayPolicyORM(Base):
+    __tablename__ = "store_special_day_policy"
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    store_id = Column(BigInteger, ForeignKey("store.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False)
+    day_type = Column(String(10), nullable=False)
+    is_operational = Column(Boolean, nullable=False)
+    effective_date = Column(Date, nullable=False)
+    end_date = Column(Date)
+    created_at = Column(TIMESTAMP)
+
+
+
