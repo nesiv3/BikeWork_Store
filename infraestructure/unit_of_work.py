@@ -1,5 +1,6 @@
 from infraestructure.database import SessionLocal
 from infraestructure.repositories.store_disabled_dates_repository import StoreDisabledDatesRepository
+from infraestructure.repositories.store_maintenance_repository import StoreMaintenanceRepository
 from infraestructure.repositories.store_repositories import StoreRepository
 from infraestructure.repositories.store_special_day_policy_repository import StoreSpecialDayPolicyRepository
 
@@ -16,6 +17,7 @@ class SqlAlchemyUnitOfWork(IUnitOfWork):
         self._stores = StoreRepository(self.session)
         self._store_disabled_dates = StoreDisabledDatesRepository(self.session)
         self._store_special_day_policy = StoreSpecialDayPolicyRepository(self.session)
+        self._store_maintenance = StoreMaintenanceRepository(self.session)
 
     def __enter__(self):
         return self
@@ -42,3 +44,7 @@ class SqlAlchemyUnitOfWork(IUnitOfWork):
     @property
     def store_special_day_policy(self):
         return self._store_special_day_policy
+    
+    @property
+    def store_maintenance(self):
+        return self._store_maintenance

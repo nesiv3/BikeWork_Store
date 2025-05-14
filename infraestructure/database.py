@@ -1,5 +1,5 @@
 import os  # Asegúrate de importar el módulo os
-from sqlalchemy import TIMESTAMP, Column, BigInteger, Date, ForeignKey, String, create_engine
+from sqlalchemy import TIMESTAMP, Column, BigInteger, Date, Double, Float, ForeignKey, Integer, String, create_engine
 from sqlalchemy.types import Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -47,5 +47,11 @@ class StoreSpecialDayPolicyORM(Base):
     end_date = Column(Date)
     created_at = Column(TIMESTAMP)
 
+class StoreMaintenanceORM(Base):
+    __tablename__ = "store_maintenance"
 
-
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    store_id = Column(BigInteger, ForeignKey("store.id"), nullable=False)
+    name = Column(String(100), nullable=False)
+    cost = Column(Float, nullable=False)
+    time = Column(Double, nullable=False)

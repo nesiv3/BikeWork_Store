@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from infraestructure.database import Base, engine
-from api import store, store_disabled_dates
+from api import store, store_disabled_dates,store_maintenance
 
 from fastapi import FastAPI
 
@@ -24,3 +24,4 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(store.router, prefix="/api")
 app.include_router(store_disabled_dates.router, prefix="/api")
+app.include_router(store_maintenance.router, prefix="/api")
