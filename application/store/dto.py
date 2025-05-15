@@ -7,6 +7,7 @@ class StoreCreateDTO(BaseModel):
     document_number: str
     phone_number: str
     image: str | None = None  # si es opcional
+    email: str | None = None  # si es opcional
 
 
     model_config = {

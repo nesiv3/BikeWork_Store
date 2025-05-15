@@ -26,6 +26,7 @@ class StoreORM(Base):
     document_number = Column(String(50))
     phone_number = Column(String(50))
     image = Column(String(255))
+    email = Column(String(200))
 
 class StoreDisabledDatesORM(Base):
     __tablename__ = "store_disabled_dates"
