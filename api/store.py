@@ -18,14 +18,14 @@ def create_store(data: StoreCreateDTO):
 
 
 @router.get("/stores/{store_id}", response_model=StoreReadWithDeliveryTimeDTO)
-def get_store(store_id: int):
+async def get_store(store_id: int):
     with SqlAlchemyUnitOfWork() as uow:
         handler = GetStoreQueryHandler(uow)
         try:
             store= handler.handle(GetStoreQuery(store_id))
             builder = StoreReadDTOBuilder(store).calculate_delivery_time()
-            builder.calculate_services()
-            builder.calculate_store_evaluation()
+            await builder.calculate_services()
+            await builder.calculate_store_evaluation()
             return builder.build()
         except NotFoundException as e:
             raise HTTPException(status_code=404, detail=str(e))
