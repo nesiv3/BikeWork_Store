@@ -49,7 +49,7 @@ class StoreSpecialDayPolicyORM(Base):
     created_at = Column(TIMESTAMP)
 
 class StoreMaintenanceORM(Base):
-    __tablename__ = "store_maintenance"
+    __tablename__ = "store_maintenance_type"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     store_id = Column(BigInteger, ForeignKey("store.id"), nullable=False)

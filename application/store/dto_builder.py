@@ -1,18 +1,52 @@
 import random
+import os
+from dotenv import load_dotenv
+
+import httpx
 from application.store.dto import StoreReadDTO, StoreReadWithDeliveryTimeDTO
 from domain.store import Store
 
+
+load_dotenv()
+MAINTENANCE_COUNT_URL = os.getenv("MAINTENANCE_COUNT_URL")
+STORE_AVERAGE_RATING_URL = os.getenv("STORE_AVERAGE_RATING_URL")
 class StoreReadDTOBuilder:
     def __init__(self, store: Store):
         self.store = store
         self.delivery_time = None
+        self.count_services = None
+        self.evaluation = None
 
     def calculate_delivery_time(self):
         # Lógica para calcular el tiempo de entrega
-        self.delivery_time = random.randint(10, 120)    
+        self.delivery_time = random.randint(10, 120)  
+        return self
+
+    async def calculate_services(self):
+        url = f"{MAINTENANCE_COUNT_URL}{self.store.id}"
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
+            response.raise_for_status()
+            self.count_services = response.json().get("count", 0)
+        return self
+    
+    async def calculate_store_evaluation(self):
+        url = f"{STORE_AVERAGE_RATING_URL}{self.store.id}/average-rating"
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
+            response.raise_for_status()
+            # Suponiendo que el JSON tiene {"average_rating": valor}
+            self.evaluation = response.json().get("average_rating", round(random.uniform(0, 5), 1))
         return self
 
     def build(self):
+
+        if self.delivery_time is None:
+         self.delivery_time = random.randint(10, 120)
+        if self.count_services is None:
+         self.count_services = random.randint(10, 120)
+        if self.evaluation is None:
+         self.evaluation = round(random.uniform(0, 5), 1)
 
         return StoreReadWithDeliveryTimeDTO(
             id=self.store.id,
@@ -22,5 +56,7 @@ class StoreReadDTOBuilder:
             document_number=self.store.document_number,
             phone_number=self.store.phone_number,
             image=self.store.image,
-            delivery_time=self.delivery_time 
+            delivery_time=self.delivery_time,
+            count_services=self.count_services,
+            evaluation=self.evaluation,
         )

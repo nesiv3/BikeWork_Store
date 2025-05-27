@@ -39,5 +39,5 @@ def get_all_stores_with_delivery_time():
         handler = GetAllStoresQueryHandler(uow)
         stores = handler.handle(GetAllStoresQuery())
         # Usar el Builder para calcular delivery_time para cada tienda
-        return [StoreReadDTOBuilder(store).calculate_delivery_time().build() for store in stores]
+        return [StoreReadDTOBuilder(store).calculate_delivery_time().calculate_delivery_time().calculate_store_evaluation().build() for store in stores]
          

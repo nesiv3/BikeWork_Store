@@ -19,6 +19,8 @@ class StoreReadDTO(StoreCreateDTO):
   
 
 class StoreReadWithDeliveryTimeDTO(StoreReadDTO):
-    delivery_time: int  # Asegúrate de que este campo esté definido si lo necesitas
+    delivery_time: int 
+    count_services: int
+    evaluation: float
     class Config:
         orm_mode = True
