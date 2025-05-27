@@ -1,5 +1,6 @@
 import asyncio
 from fastapi import APIRouter, Depends, HTTPException
+from application.store.build_store import build_store
 from application.store.queries.get_store import GetAllStoresQuery, GetAllStoresQueryHandler, GetStoreQuery, GetStoreQueryHandler
 from infraestructure.unit_of_work import SqlAlchemyUnitOfWork
 from application.store.commands.create_store import CreateStoreCommand, CreateStoreHandler
@@ -42,16 +43,7 @@ def get_all_stores():
 async def get_all_stores_with_delivery_time():
     with SqlAlchemyUnitOfWork() as uow:
         handler = GetAllStoresQueryHandler(uow)
-        stores = handler.handle(GetAllStoresQuery())
-
-        async def build_store(store):
-            builder = StoreReadDTOBuilder(store).calculate_delivery_time()
-            await asyncio.gather(
-                builder.calculate_services(),
-                builder.calculate_store_evaluation()
-            )
-            return builder.build()
-
+        stores = handler.handle(GetAllStoresQuery())            
         # Ejecuta todos los builds en paralelo
         result = await asyncio.gather(*(build_store(store) for store in stores))
         return result
