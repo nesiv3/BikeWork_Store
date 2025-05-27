@@ -24,19 +24,28 @@ class StoreReadDTOBuilder:
 
     async def calculate_services(self):
         url = f"{MAINTENANCE_COUNT_URL}{self.store.id}"
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url)
-            response.raise_for_status()
-            self.count_services = response.json().get("count", 0)
+        try:
+            async with httpx.AsyncClient(timeout=1) as client:
+                response = await client.get(url)
+                response.raise_for_status()
+                # Suponiendo que el JSON tiene {"average_rating": valor}
+                self.evaluation = response.json().get("count", -1)
+        except Exception as e:
+            print(f"Error al obtener count: {e}")
+            self.evaluation = -1
         return self
     
     async def calculate_store_evaluation(self):
         url = f"{STORE_AVERAGE_RATING_URL}{self.store.id}/average-rating"
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url)
-            response.raise_for_status()
-            # Suponiendo que el JSON tiene {"average_rating": valor}
-            self.evaluation = response.json().get("average_rating", round(random.uniform(0, 5), 1))
+        try:
+            async with httpx.AsyncClient(timeout=1) as client:
+                response = await client.get(url)
+                response.raise_for_status()
+                # Suponiendo que el JSON tiene {"average_rating": valor}
+                self.evaluation = response.json().get("average_rating", -1)
+        except Exception as e:
+            print(f"Error al obtener average_rating: {e}")
+            self.evaluation = -1
         return self
 
     def build(self):

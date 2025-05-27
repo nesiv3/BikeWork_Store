@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import APIRouter, Depends, HTTPException
 from application.store.queries.get_store import GetAllStoresQuery, GetAllStoresQueryHandler, GetStoreQuery, GetStoreQueryHandler
 from infraestructure.unit_of_work import SqlAlchemyUnitOfWork
@@ -16,12 +17,16 @@ def create_store(data: StoreCreateDTO):
 
 
 
-@router.get("/stores/{store_id}", response_model=StoreReadDTO)
+@router.get("/stores/{store_id}", response_model=StoreReadWithDeliveryTimeDTO)
 def get_store(store_id: int):
     with SqlAlchemyUnitOfWork() as uow:
         handler = GetStoreQueryHandler(uow)
         try:
-            return handler.handle(GetStoreQuery(store_id))
+            store= handler.handle(GetStoreQuery(store_id))
+            builder = StoreReadDTOBuilder(store).calculate_delivery_time()
+            builder.calculate_services()
+            builder.calculate_store_evaluation()
+            return builder.build()
         except NotFoundException as e:
             raise HTTPException(status_code=404, detail=str(e))
         
@@ -33,11 +38,9 @@ def get_all_stores():
         return handler.handle(GetAllStoresQuery())
     
 
-@router.get("/storesWithDeliveryTime", response_model=list[StoreReadWithDeliveryTimeDTO])
-def get_all_stores_with_delivery_time():
+@router.get("/storesWithData", response_model=list[StoreReadDTO])
+async def get_all_stores_with_delivery_time():
     with SqlAlchemyUnitOfWork() as uow:
         handler = GetAllStoresQueryHandler(uow)
-        stores = handler.handle(GetAllStoresQuery())
-        # Usar el Builder para calcular delivery_time para cada tienda
-        return [StoreReadDTOBuilder(store).calculate_delivery_time().calculate_delivery_time().calculate_store_evaluation().build() for store in stores]
-         
+        stores = handler.handle(GetAllStoresQuery())  
+        return stores
