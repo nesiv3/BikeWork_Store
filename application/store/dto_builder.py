@@ -51,11 +51,11 @@ class StoreReadDTOBuilder:
     def build(self):
 
         if self.delivery_time is None:
-         self.delivery_time = random.randint(10, 120)
+         self.delivery_time = -1
         if self.count_services is None:
-         self.count_services = random.randint(10, 120)
+         self.count_services =-1
         if self.evaluation is None:
-         self.evaluation = round(random.uniform(0, 5), 1)
+         self.evaluation = -1
 
         return StoreReadWithDeliveryTimeDTO(
             id=self.store.id,

@@ -38,9 +38,12 @@ def get_all_stores():
         return handler.handle(GetAllStoresQuery())
     
 
-@router.get("/storesWithData", response_model=list[StoreReadDTO])
-async def get_all_stores_with_delivery_time():
+@router.get("/storesWithData", response_model=list[StoreReadWithDeliveryTimeDTO])
+def get_all_stores_with_delivery_time():
     with SqlAlchemyUnitOfWork() as uow:
         handler = GetAllStoresQueryHandler(uow)
         stores = handler.handle(GetAllStoresQuery())  
-        return stores
+        return [
+            StoreReadDTOBuilder(store).calculate_delivery_time().build()
+            for store in stores
+        ]
