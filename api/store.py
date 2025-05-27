@@ -39,11 +39,19 @@ def get_all_stores():
     
 
 @router.get("/storesWithData", response_model=list[StoreReadWithDeliveryTimeDTO])
-def get_all_stores_with_delivery_time():
+async def get_all_stores_with_delivery_time():
     with SqlAlchemyUnitOfWork() as uow:
         handler = GetAllStoresQueryHandler(uow)
-        stores = handler.handle(GetAllStoresQuery())  
-        return [
-            StoreReadDTOBuilder(store).calculate_delivery_time().build()
-            for store in stores
-        ]
+        stores = handler.handle(GetAllStoresQuery())
+
+        async def build_store(store):
+            builder = StoreReadDTOBuilder(store).calculate_delivery_time()
+            await asyncio.gather(
+                builder.calculate_services(),
+                builder.calculate_store_evaluation()
+            )
+            return builder.build()
+
+        # Ejecuta todos los builds en paralelo
+        result = await asyncio.gather(*(build_store(store) for store in stores))
+        return result
