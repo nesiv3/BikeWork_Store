@@ -26,7 +26,7 @@ class StoreReadDTOBuilder:
         url = f"{MAINTENANCE_COUNT_URL}{self.store.id}"
         print(f"Flag 1: {url}")
         try:
-            async with httpx.AsyncClient(timeout=1) as client:
+            async with httpx.AsyncClient(timeout=5) as client:
                 response = await client.get(url)
                 response.raise_for_status()
                 # Suponiendo que el JSON tiene {"average_rating": valor}
@@ -41,7 +41,7 @@ class StoreReadDTOBuilder:
         url = f"{STORE_AVERAGE_RATING_URL}{self.store.id}/average-rating"
         print(f"Flag 2: {url}")
         try:
-            async with httpx.AsyncClient(timeout=1) as client:
+            async with httpx.AsyncClient(timeout=5) as client:
                 response = await client.get(url)
                 response.raise_for_status()
                 # Suponiendo que el JSON tiene {"average_rating": valor}
