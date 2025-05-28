@@ -21,6 +21,7 @@ __pycache__/
 *.log
 
 # Archivos de configuración sensibles
+*.env
 .env
 *.key
 *.pem
