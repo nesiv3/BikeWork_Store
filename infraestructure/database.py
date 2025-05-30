@@ -56,3 +56,5 @@ class StoreMaintenanceORM(Base):
     name = Column(String(100), nullable=False)
     cost = Column(Float, nullable=False)
     time = Column(Double, nullable=False)
+    maintenance_description = Column(String(255), nullable=False)
+    image = Column(String(255), nullable=True)
